@@ -40,7 +40,7 @@ export default function LoginOtp() {
     const res = await api.post("/login", { email, password, captchaToken });
       if (res.data.success) {
         setShowOtp(true); // show OTP input
-        alert("OTP sent to your email! (for demo: use 123456)");
+        alert("OTP sent to your email.");
       }
     } else {
       alert("Enter email and password");

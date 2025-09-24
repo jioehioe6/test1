@@ -128,7 +128,7 @@ const AboutUs = () => {
               <h2 className="text-2xl font-bold text-primary mb-6">Organisation Structure</h2>
               <div className="flex justify-center">
                 <img
-                  src="/organization.png"
+                  src="https://i.postimg.cc/XYMgnkvn/organization.png"
                   alt="Organization Structure"
                   className="rounded-lg shadow-md object-contain w-full h-auto max-h-[600px]"
                 />

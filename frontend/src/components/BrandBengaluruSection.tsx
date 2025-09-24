@@ -27,7 +27,7 @@ const BrandBengaluruSection = () => {
           <div className="order-1 lg:order-2">
             <div className="rounded-xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-white">
               <img
-                src={brandBanner}
+                src="https://i.postimg.cc/hvWLbV5S/brand-bangloure.png"
                 alt="Brand Bengaluru"
                 className="w-full h-auto object-cover"
               />

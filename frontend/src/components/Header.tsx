@@ -44,7 +44,8 @@ const Header = () => {
       >
         <div className="container mx-auto flex items-center justify-between px-3 py-1.5 relative z-10">
           <div className="flex items-center gap-2 min-w-0 max-w-[60%]">
-            <img src={bdaLogo} alt="BDA Logo" className="h-4 w-4 rounded-sm" />
+           <img src="https://i.postimg.cc/V0CG3g9m/your-image.png" alt="BDA Logo" className="h-4 w-4 rounded-sm" />
+
             <span
               className={`font-medium truncate drop-shadow ${
                 theme === "independence-day" ? "text-[#000080]" : "text-white"
@@ -104,7 +105,12 @@ const Header = () => {
       <div className="bg-white py-2 md:py-3 px-3 md:px-4">
         <div className="container mx-auto flex flex-wrap justify-between items-center gap-2 overflow-x-hidden">
           <div className="flex items-center gap-2 min-w-0">
-            <img src={bdaLogo} alt="BDA Logo" className="h-10 md:h-12" />
+           <img
+  src="https://i.postimg.cc/rshBRYK0/bda-logo.png"
+  alt="BDA Logo"
+  className="h-10 md:h-12"
+/>
+
           </div>
           <div className="hidden md:block relative w-full max-w-xs">
             <input

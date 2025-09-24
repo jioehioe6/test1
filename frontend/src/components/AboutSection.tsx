@@ -47,7 +47,7 @@ const AboutSection = () => {
           {/* Image instead of Cards */}
           <div className="flex justify-center">
             <img
-              src={BdaImage}
+               src="https://i.postimg.cc/zv0kJs3M/image.png"
               alt="Bangalore Development Authority"
               className="rounded-2xl shadow-lg object-cover w-full h-auto max-h-[450px]"
             />

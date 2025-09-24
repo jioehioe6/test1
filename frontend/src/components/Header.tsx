@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Home, Menu, X, Search } from "lucide-react";
-import bdaLogo from "../assets/bda-logo.png";
+import bdaLogo from "../bda-logo.png";
 import LoginModal from "./LoginModal";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { useTheme } from "@/contexts/ThemeContext";

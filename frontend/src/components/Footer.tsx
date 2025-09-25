@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const Footer = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
   const policies = [
     "Copyright Policy",
     "Security Policy", 
@@ -14,6 +18,12 @@ const Footer = () => {
     "Disclaimer"
   ];
 
+  const handlePolicyClick = (policy: string) => {
+    if (policy === "Copyright Policy") {
+      setIsDialogOpen(true);
+    }
+  };
+
   return (
     <footer className="bg-gray-800 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -24,7 +34,12 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-4 text-primary">Policies & Guidelines</h3>
             <div className="grid grid-cols-2 gap-2">
               {policies.slice(0, 6).map((policy, index) => (
-                <Button key={index} variant="ghost" className="justify-start text-gray-300 hover:text-white hover:bg-gray-700 p-2 h-auto text-sm">
+                <Button 
+                  key={index} 
+                  variant="ghost" 
+                  className="justify-start text-gray-300 hover:text-white hover:bg-gray-700 p-2 h-auto text-sm"
+                  onClick={() => handlePolicyClick(policy)}
+                >
                   {policy}
                 </Button>
               ))}
@@ -81,6 +96,50 @@ const Footer = () => {
           </p>
         </div>
       </div>
+
+      {/* Copyright Policy Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-primary">Copyright Policy</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 text-sm">
+            <div>
+              <h3 className="text-lg font-semibold mb-3 text-primary">
+                Copyright policy (if the published information is available free of any charge)
+              </h3>
+              <div className="space-y-3">
+                <p>
+                  <strong>1.</strong> Information featured on this website can be re-published in any media form free of any charge only with prior permission from us(CeG) or concerned respective authority which is owning the website, through email.
+                </p>
+                <p>
+                  <strong>2.</strong> Information can be republished as it is available and not to be used in a distorted or misleading manner.
+                </p>
+                <p>
+                  <strong>3.</strong> Where the material is being published or suggested to others, the source must be prominently acknowledged.
+                </p>
+                <p>
+                  <strong>4.</strong> However, the permission to reproduce this material does not extend to any material on this site, which is explicitly identified as being the copyright of a third party.
+                </p>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-3 text-primary">
+                Copyright policy (if there is a provision to reuse published information)
+              </h3>
+              <div className="space-y-3">
+                <p>
+                  <strong>1)</strong> The information published on the website comes under copyright policy and obtaining authorization for their republish is a pre-requisite.
+                </p>
+                <p>
+                  <strong>2)</strong> To get permission one can mail to info@bda.karnataka.gov.in
+                </p>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </footer>
   );
 };

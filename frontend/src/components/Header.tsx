@@ -21,6 +21,7 @@ const Header = () => {
     { label: "IPGRS", href: "https://ipgrs.karnataka.gov.in/" },
     { label: "ONGOING PROJECTS", href: "/ongoingproject" },
     { label: "PHOTO GALLERY", href: "/photo-gallery" },
+    { label: "E-AUCTION", href: "/e-auction" },
     { label: "EODB", href: "/eodb" },
     { label: "CONTACT US", href: "/contact" },
   ];
@@ -173,6 +174,12 @@ const Header = () => {
               theme === "independence-day" ? "bg-[#138808]" : "bg-[#1A237E]"
             }`}
           >
+            <Link to="/">
+              <div className="flex items-center gap-2 text-sm py-2 px-3 rounded-lg font-semibold transition-all hover:bg-white/10">
+                <Home className="h-4 w-4" />
+                <span>HOME</span>
+              </div>
+            </Link>
             {mainLinks.map((link) => (
               <a
                 key={link.label}

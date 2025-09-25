@@ -7,6 +7,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import BrandBengaluru from "./pages/BrandBengaluru";
 import EODB from "./pages/EODB";
+import EAuction from "./pages/EAuction";
+import Finance from "./pages/Finance";
+import LandAcquisition from "./pages/LandAcquisition";
+import CATdr from "./pages/CATdr";
+import Administration from "./pages/Administration";
+import Engineering from "./pages/Engineering";
+import TownPlanning from "./pages/TownPlanning";
 import Contact from "./pages/Contact";
 import AboutUs from "./pages/AboutUs";
 import Ongoingproject from "./pages/Ongoingproject";
@@ -59,6 +66,13 @@ function App() {
                 <Route path="/photo-gallery" element={<PhotoGallery />} />
                 <Route path="/brand-bengaluru" element={<BrandBengaluru />} />
                 <Route path="/eodb" element={<EODB />} />
+                <Route path="/e-auction" element={<EAuction />} />
+                <Route path="/finance" element={<Finance />} />
+                <Route path="/land-acquisition" element={<LandAcquisition />} />
+                <Route path="/ca-tdr" element={<CATdr />} />
+                <Route path="/administration" element={<Administration />} />
+                <Route path="/engineering" element={<Engineering />} />
+                <Route path="/town-planning" element={<TownPlanning />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/ongoingproject" element={<Ongoingproject />} />

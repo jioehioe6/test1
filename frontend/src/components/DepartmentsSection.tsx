@@ -9,8 +9,10 @@ import {
   Building2,
   ArrowRight 
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const DepartmentsSection = () => {
+  const navigate = useNavigate();
   const departments = [
     {
       icon: Calculator,
@@ -77,7 +79,18 @@ const DepartmentsSection = () => {
                   <CardDescription className="text-gray-600 mb-6 leading-relaxed line-clamp-3">
                     {dept.description}
                   </CardDescription>
-                  <Button variant="outline" className="group/btn btn-outline-primary">
+                  <Button 
+                    variant="outline" 
+                    className="group/btn btn-outline-primary"
+                    onClick={() => {
+                      if (dept.title === "Finance") navigate("/finance");
+                      if (dept.title === "Land Acquisition") navigate("/land-acquisition");
+                      if (dept.title === "CA and TDR") navigate("/ca-tdr");
+                      if (dept.title === "Administration") navigate("/administration");
+                      if (dept.title === "Engineering") navigate("/engineering");
+                      if (dept.title === "Town Planning") navigate("/town-planning");
+                    }}
+                  >
                     Know More
                     <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>

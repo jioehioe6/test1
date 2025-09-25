@@ -71,7 +71,7 @@ router.put('/news', authMiddleware, async (req, res) => {
 });
 
 // GET /news - return all news items
-router.get('/news',authMiddleware, async (req, res) => {
+router.get('/news', async (req, res) => {
   try {
     console.log('[content] GET /news');
     const newsDoc = await News.findOne();
@@ -85,7 +85,7 @@ router.get('/news',authMiddleware, async (req, res) => {
 });
 
 // GET /news/:id - return a single news item by its subdocument _id
-router.get('/news/:id', authMiddleware,async (req, res) => {
+router.get('/news/:id', async (req, res) => {
   try {
     const { id } = req.params;
     console.log('[content] GET /news/:id', id);

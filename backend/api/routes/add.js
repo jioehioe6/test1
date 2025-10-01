@@ -120,5 +120,30 @@ router.get("/admins", async (req, res) => {
   }
 });
 
+router.post("/changerole", authMiddleware, async (req, res) => {
+  try {
+    const { newRole, email } = req.body; // new role from request body
+
+    console.log("Changerole requested by:", email, "New role:", newRole);
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update the role
+    user.role = newRole;
+    await user.save();
+
+    res.status(200).json({ message: "Role updated successfully", role: user.role });
+  } catch (error) {
+    console.error("Error changing role:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 
 module.exports = router;

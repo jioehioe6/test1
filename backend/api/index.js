@@ -49,7 +49,10 @@ app.use(async (req, res, next) => {
 app.use("/api", addRoutes);
 app.use("/", authRoutes);
 app.use("/content", contentRoutes);
+app.use("/admin", require("./routes/admin"));
+app.use("/leadadmin", require("./routes/leadadmin"));
+app.use("/superadmin", require("./routes/superadmin"));
 
-// ✅ Export for Vercel
+
 module.exports = app;
 module.exports.handler = serverless(app);

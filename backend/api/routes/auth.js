@@ -11,35 +11,46 @@ const authMiddleware = require("../controler/Auth"); // import middleware
 
 
 router.post("/login", async (req, res) => {
- 
-  const { email, password, captchaToken } = req.body;
-
-  // Verify reCAPTCHA
-  const isCaptchaValid = await verifyCaptcha(captchaToken);
-  if (!isCaptchaValid) {
-    return res.status(400).json({ message: "Invalid reCAPTCHA" });
-    
-  }
-   
- 
   try {
+    const { email, password, captchaToken } = req.body;
 
-     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid email or password" });
-       const isMatch = await bcrypt.compare(password, user.password);
+    // Validate inputs
+    if (!email || !password || !captchaToken) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Verify reCAPTCHA
+    let isCaptchaValid;
+    try {
+      isCaptchaValid = await verifyCaptcha(captchaToken);
+    } catch (captchaErr) {
+      console.error("CAPTCHA verification error:", captchaErr);
+      return res.status(500).json({ message: "Captcha verification failed" });
+    }
+
+    if (!isCaptchaValid) {
+      return res.status(400).json({ message: "Invalid reCAPTCHA" });
+    }
+
+    // Find user in DB
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    
 
-    
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000);
     console.log("Generated OTP:", otp);
 
     const expireAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min expiry
 
-    // Save OTP to MongoDB
+    // Save OTP to DB
     try {
       await Otp.create({ email, otp, expireAt });
       console.log("Saved OTP to DB for email:", email);
@@ -49,17 +60,34 @@ router.post("/login", async (req, res) => {
     }
 
     // Send OTP via email
-    const sent = await sendOtp(email, otp);
-    if (sent) {
-    res.json({ success: true, message: "OTP sent successfully" });
-    } else {
-      res.status(500).json({ message: "Failed to send OTP" });
+    try {
+      const sent = await sendOtp(email, otp);
+      if (sent) {
+        return res.json({ success: true, message: "OTP sent successfully" });
+      } else {
+        return res.status(500).json({ message: "Failed to send OTP" });
+      }
+    } catch (mailErr) {
+      console.error("Email sending error:", mailErr);
+      return res.status(500).json({ message: "Error sending OTP email" });
     }
+
   } catch (err) {
-    console.error("Server error:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Unexpected error during login:", err);
+
+    // Custom error handling
+    if (err.name === "MongoNetworkError") {
+      return res.status(503).json({ message: "Database connection error" });
+    }
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: "Invalid input format" });
+    }
+
+    // Fallback
+    return res.status(500).json({ message: "Something went wrong, please try again later" });
   }
 });
+
 
 
 router.post("/verify-otp", async (req, res) => {
@@ -96,8 +124,11 @@ res.cookie("authToken", token, {
   maxAge: 24 * 60 * 60 * 1000 // 1 day
 });
 
-res.json({ success: true, message: "Logged in successfully" });
-
+ res.json({
+      success: true,
+      message: "Logged in successfully",
+      role: user.role
+    });
 });
 
 

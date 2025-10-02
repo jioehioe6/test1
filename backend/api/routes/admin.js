@@ -13,9 +13,6 @@ const leadAdminToggle = require('../leadadminmodal/button');
 const LeadAdminGallery = require('../leadadminmodal/content');
 const LeadAdminNews = require('../leadadminmodal/news');
 const LeadAdminBanner = require('../leadadminmodal/img');
-
-
-
 // ------------------- GALLERY ROUTES -------------------
 
 // PUT /gallery - replace the gallery images array
@@ -181,7 +178,7 @@ router.get('/toggle', authMiddleware, async (req, res) => {
 // ------------------- BANNER ROUTES -------------------
 
 // PUT /banner - update banner images
-router.put('/banner', async (req, res) => {
+router.put('/banner', authMiddleware, async (req, res) => {
   try {
     const { images } = req.body;
     if (!Array.isArray(images)) {
@@ -226,7 +223,7 @@ router.get('/all-content', async (req, res) => {
 
 // ------------------- LEAD ADMIN RESTORE ROUTE -------------------
 
-router.put('/forward', async (req, res) => {
+router.put('/forward', authMiddleware, async (req, res) => {
   try {
     // Fetch data from admin collections
     const adminGalleryData = await AdminGallery.find();

@@ -45,5 +45,24 @@ const sendEmail = async (toEmail, password) => {
     return false;
   }
 };
-module.exports = { sendOtp, sendEmail };
+
+
+const sendToMultiple = async (emails, subject, text) => {
+  const mailOptions = {
+    from: "dazton.com",
+    to: emails.join(', '), // join array into comma-separated string
+    subject: subject,
+    text: text,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Bulk email sent: " + info.response);
+    return true;
+  } catch (error) {
+    console.error("Error sending bulk email:", error);
+    return false;
+  }
+};
+module.exports = { sendOtp, sendEmail, sendToMultiple };
 

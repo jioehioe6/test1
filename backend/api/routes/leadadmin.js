@@ -5,11 +5,14 @@ const LeadAdminGallery = require('../leadadminmodal/content');
 const LeadAdminNews = require('../leadadminmodal/news'); 
 const LeadAdminBanner = require('../leadadminmodal/img'); 
 const authMiddleware = require("../controler/Auth"); 
-
 const SuperAdminToggle = require('../superadmin/button');  // ✅ fixed (capital S)
 const SuperAdminGallery = require('../superadmin/content'); 
 const SuperAdminNews = require('../superadmin/news'); 
 const SuperAdminBanner = require('../superadmin/img'); 
+const User = require("../models/User");
+const { sendToMultiple } = require("../controler/mailer");
+
+
 
 
 // PUT /gallery
@@ -197,7 +200,7 @@ router.put('/banner', authMiddleware, async (req, res) => {
 
 
 // PUT /forward  (Lead -> Super)
-router.put('/forward', async (req, res) => {
+router.put('/forward', authMiddleware,async (req, res) => {
   try {
     // Fetch data from lead admin collections
     const leadAdminGalleryData = await LeadAdminGallery.find();
@@ -224,6 +227,43 @@ router.put('/forward', async (req, res) => {
     res.status(500).json({ error: 'Failed to restore super admin data' });
   }
 });
+
+
+
+// PUT /reject (Clear Lead Admin content)
+router.put('/reject', authMiddleware, async (req, res) => {
+  try {
+    // Fetch current content before delete
+    const newsDoc = await LeadAdminNews.findOne();
+    const galleryDoc = await LeadAdminGallery.findOne();
+    const toggle = await LeadAdminToggle.findOne();
+    const banner = await LeadAdminBanner.findOne();
+
+    // Fetch admin emails
+    const admins = await User.find({ role: 'admin' }).select('email');
+    const emails = admins.map(admin => admin.email);
+
+    // Send email if admins exist
+    if (emails.length > 0) {
+      const subject = 'Content Rejected';
+      const text = `Lead admin content rejected and cleared.\n\nPrevious content:\nNews: ${JSON.stringify(newsDoc?.newsItems || [])}\nGallery: ${JSON.stringify(galleryDoc?.galleryImages || [])}\nToggle: ${toggle?.isActive || false}\nBanner: ${JSON.stringify(banner?.images || [])}`;
+      await sendToMultiple(emails, subject, text);
+    }
+
+    // Delete content
+    await LeadAdminGallery.deleteMany();
+    await LeadAdminNews.deleteMany();
+    await LeadAdminToggle.deleteMany();
+    await LeadAdminBanner.deleteMany();
+
+    res.json({ message: 'Lead admin content rejected, emailed to admins, and cleared' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 
 module.exports = router;

@@ -7,7 +7,9 @@ const SuperAdminNews = require('../superadmin/news');
 const SuperAdminBanner = require('../superadmin/img'); 
 
 const authMiddleware = require("../controler/Auth"); 
+const User = require("../models/User");
 
+const { sendToMultiple } = require("../controler/mailer");
 
 const Gallery = require('../models/content'); // adjust path
 const News = require('../models/news'); // adjust path
@@ -190,7 +192,7 @@ router.get('/all-content', async (req, res) => {
 });
 
 
-router.put('/forward', async (req, res) => {
+router.put('/forward',authMiddleware, async (req, res) => {
   try {
     // Fetch data from super admin collections
     const superAdminGalleryData = await SuperAdminGallery.find();
@@ -208,8 +210,8 @@ router.put('/forward', async (req, res) => {
     await Toggle.deleteMany();   // normal toggle collection
     await Toggle.insertMany(superAdminToggleData);
 
-    await Banner.deleteMany();
-    await Banner.insertMany(superAdminBannerData);
+    await Galleryy.deleteMany();
+    await Galleryy.insertMany(superAdminBannerData);
 
     res.status(200).json({ message: 'Normal collections restored from super admin data successfully' });
   } catch (error) {
@@ -217,6 +219,41 @@ router.put('/forward', async (req, res) => {
     res.status(500).json({ error: 'Failed to restore normal collections' });
   }
 });
+
+
+
+router.put('/reject',authMiddleware, async (req, res) => {
+  try {
+    // Fetch current content before delete
+    const newsDoc = await SuperAdminNews.findOne();
+    const galleryDoc = await SuperAdminGallery.findOne();
+    const toggle = await SuperAdminToggle.findOne();
+    const banner = await SuperAdminBanner.findOne();
+
+    // Fetch superadmin emails
+    const admins = await User.find({ role: 'leadadmin' }).select('email');
+    const emails = admins.map(admin => admin.email);
+
+    // Send email if admins exist
+    if (emails.length > 0) {
+      const subject = 'Content Rejected';
+      const text = `Super admin content rejected and cleared.\n\nPrevious content:\nNews: ${JSON.stringify(newsDoc?.newsItems || [])}\nGallery: ${JSON.stringify(galleryDoc?.galleryImages || [])}\nToggle: ${toggle?.isActive || false}\nBanner: ${JSON.stringify(banner?.images || [])}`;
+      await sendToMultiple(emails, subject, text);
+    }
+
+    // Delete content
+    await SuperAdminGallery.deleteMany();
+    await SuperAdminNews.deleteMany();
+    await SuperAdminToggle.deleteMany();
+    await SuperAdminBanner.deleteMany();
+
+    res.json({ message: 'Super admin content rejected, emailed to admins, and cleared' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 
 module.exports = router;

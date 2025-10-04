@@ -10,4 +10,4 @@ const leadAdminGallerySchema = new mongoose.Schema({
   galleryImages: [leadadmingalleryImageSchema]   // array field named galleryImages
 });
 
-module.exports = mongoose.model('LeadAdminGallery', leadAdminGallerySchema);
+module.exports = mongoose.model('leadAdminGallery', leadAdminGallerySchema);

@@ -10,9 +10,9 @@ const News = require('../models/news');
 const Toggle = require('../models/button');
 const Galleryy = require('../models/img');
 const leadAdminToggle = require('../leadadminmodal/button');
-const LeadAdminGallery = require('../leadadminmodal/content');
-const LeadAdminNews = require('../leadadminmodal/news');
-const LeadAdminBanner = require('../leadadminmodal/img');
+const leadAdminGallery = require('../leadadminmodal/content');
+const leadAdminNews = require('../leadadminmodal/news');
+const leadAdminBanner = require('../leadadminmodal/img');
 // ------------------- GALLERY ROUTES -------------------
 
 // PUT /gallery - replace the gallery images array
@@ -225,36 +225,56 @@ router.get('/all-content', async (req, res) => {
 
 router.put('/forward', async (req, res) => {
   try {
-    // Fetch data from admin collections
+    // 1️⃣ Fetch data from admin collections
     const adminGalleryData = await AdminGallery.find();
     const adminNewsData = await AdminNews.find();
     const adminToggleData = await AdminToggle.find();
     const adminBannerData = await AdminBanner.find();
 
-    // Replace lead admin collections with admin data
-    await LeadAdminGallery.deleteMany();
-    await LeadAdminGallery.insertMany(adminGalleryData);
+    // If any collection is empty, warn
+    if (!adminGalleryData.length && !adminNewsData.length && !adminToggleData.length && !adminBannerData.length) {
+      return res.status(400).json({ error: 'No admin data found to forward' });
+    }
 
-    await LeadAdminNews.deleteMany();
-    await LeadAdminNews.insertMany(adminNewsData);
+    // 2️⃣ Clean data to avoid _id conflicts
+    const cleanData = (data) => data.map(({ _id, ...rest }) => rest);
 
-    await leadAdminToggle.deleteMany();
-    await leadAdminToggle.insertMany(adminToggleData);
+    // 3️⃣ Forward data to lead admin collections
+    try {
+      await leadAdminGallery.deleteMany();
+      await leadAdminGallery.insertMany(cleanData(adminGalleryData));
 
-    await LeadAdminBanner.deleteMany();
-    await LeadAdminBanner.insertMany(adminBannerData);
+      await leadAdminNews.deleteMany();
+      await leadAdminNews.insertMany(cleanData(adminNewsData));
 
+      await leadAdminToggle.deleteMany();
+      await leadAdminToggle.insertMany(cleanData(adminToggleData));
 
-    await AdminGallery.deleteMany();
-    await AdminNews.deleteMany();
-    await AdminToggle.deleteMany();
-    await AdminBanner.deleteMany();
+      await leadAdminBanner.deleteMany();
+      await leadAdminBanner.insertMany(cleanData(adminBannerData));
+    } catch (insertError) {
+      console.error('Error inserting data into lead admin collections:', insertError);
+      return res.status(500).json({ error: 'Failed to insert data into lead admin collections', details: insertError.message });
+    }
 
-    res.status(200).json({ message: 'Lead admin data restored from admin collections successfully' });
+    // 4️⃣ Optional: Delete admin collections only if forwarding succeeded
+    try {
+      await AdminGallery.deleteMany();
+      await AdminNews.deleteMany();
+      await AdminToggle.deleteMany();
+      await AdminBanner.deleteMany();
+    } catch (deleteError) {
+      console.error('Error deleting admin collections:', deleteError);
+      return res.status(500).json({ error: 'Forwarded data but failed to delete admin collections', details: deleteError.message });
+    }
+
+    res.status(200).json({ message: 'Lead admin data forwarded successfully' });
+
   } catch (error) {
-    console.error('Error restoring lead admin data:', error);
-    res.status(500).json({ error: 'Failed to restore lead admin data' });
+    console.error('Unexpected error in forwarding:', error);
+    res.status(500).json({ error: 'Unexpected error occurred', details: error.message });
   }
 });
+
 
 module.exports = router;

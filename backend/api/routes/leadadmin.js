@@ -4,13 +4,14 @@ const LeadAdminToggle = require('../leadadminmodal/button');
 const LeadAdminGallery = require('../leadadminmodal/content'); 
 const LeadAdminNews = require('../leadadminmodal/news'); 
 const LeadAdminBanner = require('../leadadminmodal/img'); 
-const authMiddleware = require("../controler/Auth"); 
+const authMiddleware = require("../controler/lead"); 
 const SuperAdminToggle = require('../superadmin/button');  // ✅ fixed (capital S)
 const SuperAdminGallery = require('../superadmin/content'); 
 const SuperAdminNews = require('../superadmin/news'); 
 const SuperAdminBanner = require('../superadmin/img'); 
 const User = require("../models/User");
 const { sendToMultiple } = require("../controler/mailer");
+
 
 
 

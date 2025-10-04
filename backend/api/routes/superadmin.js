@@ -6,7 +6,7 @@ const SuperAdminGallery = require('../superadmin/content');
 const SuperAdminNews = require('../superadmin/news'); 
 const SuperAdminBanner = require('../superadmin/img'); 
 
-const authMiddleware = require("../controler/Auth"); 
+const authMiddleware = require("../controler/super"); 
 const User = require("../models/User");
 
 const { sendToMultiple } = require("../controler/mailer");

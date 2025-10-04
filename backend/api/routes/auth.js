@@ -12,24 +12,11 @@ const authMiddleware = require("../controler/Auth"); // import middleware
 
 router.post("/login", async (req, res) => {
   try {
-    const { email, password, captchaToken } = req.body;
+    const { email, password } = req.body;
 
     // Validate inputs
-    if (!email || !password || !captchaToken) {
+    if (!email || !password) {
       return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    // Verify reCAPTCHA
-    let isCaptchaValid;
-    try {
-      isCaptchaValid = await verifyCaptcha(captchaToken);
-    } catch (captchaErr) {
-      console.error("CAPTCHA verification error:", captchaErr);
-      return res.status(500).json({ message: "Captcha verification failed" });
-    }
-
-    if (!isCaptchaValid) {
-      return res.status(400).json({ message: "Invalid reCAPTCHA" });
     }
 
     // Find user in DB

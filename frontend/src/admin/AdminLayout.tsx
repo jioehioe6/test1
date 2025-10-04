@@ -16,24 +16,60 @@ interface ToggleResponse {
 const AdminLayout = () => {
 
 
-  useEffect(() => {
-    // define an async function inside useEffect
-    const fetchContent = async () => {
+useEffect(() => {
+  const fetchContent = async () => {
+    try {
+      const res = await api.get("/content/all-content");
+      const data = res.data;
+
+      // Check if any key is empty
+      const isEmpty =
+        !data ||
+        (Array.isArray(data.banner) && data.banner.length === 0) ||
+        (Array.isArray(data.galleryImages) && data.galleryImages.length === 0) ||
+        (Array.isArray(data.newsItems) && data.newsItems.length === 0) ||
+        !data.toggle; // toggle is false
+
+      if (isEmpty) {
+        localStorage.removeItem("superContent");
+        console.log("Local storage cleared because some content is empty:", data);
+      } else {
+        localStorage.setItem("superContent", JSON.stringify(data));
+        console.log("Data saved to localStorage:", data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch content:", error);
+      localStorage.removeItem("superContent");
+      console.log("Local storage cleared due to fetch failure.");
+    }
+  };
+
+  fetchContent();
+}, []);
+
+
+
+  const handleForward = async () => {
+   
       try {
-        const res = await api.get("/superadmin/all-content", {
-        });
-
-        // Store data in localStorage
-        localStorage.setItem("superContent", JSON.stringify(res.data));
-
-        console.log("Data saved to localStorage:", res.data);
+        await api.put('/superadmin/forward');
+        alert('Data forwarded to higher admin!');
       } catch (error) {
-        console.error("Failed to fetch content:", error);
+        alert('Failed to forward data.');
+      } finally {
       }
     };
-
-    fetchContent(); // call the async function
-  }, []); // empty dependency array → runs once on mount
+  
+   const handleReject = async () => {
+    try {
+      await api.put('/superadmin/reject');
+      alert('Data rejected!');
+      localStorage.removeItem("superContent");
+      window.location.reload(); // refresh page
+    } catch (error) {
+      alert('Failed to reject data.');
+    }
+  };
 
   
   const navigate = useNavigate();
@@ -114,6 +150,18 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="border-r bg-white relative">
         <div className="h-14 px-4 flex items-center font-semibold">Admin</div>
+            <button
+  onClick={handleForward}
+  className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl shadow-md hover:from-indigo-600 hover:to-blue-500 transition-all duration-300 ease-in-out"
+>
+  accept
+</button>
+<button
+  onClick={handleReject}
+  className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl shadow-md hover:from-indigo-600 hover:to-blue-500 transition-all duration-300 ease-in-out"
+>
+  Rject
+</button>
         <Separator />
         <nav className="p-2 space-y-1 pb-24">
           <NavLink

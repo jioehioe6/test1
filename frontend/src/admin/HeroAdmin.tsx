@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-import api from "@/lib/api";
-import { resolveImageUrl, getGoogleDriveAlternateUrls } from "@/lib/utils";
 
 type HeroSlide = {
   imageUrl: string;
@@ -15,7 +13,6 @@ type HeroSlide = {
 };
 
 const STORAGE_KEY = "superContent.hero.slides";
-
 const defaultSlides: HeroSlide[] = [];
 
 const HeroAdmin = () => {
@@ -34,21 +31,13 @@ const HeroAdmin = () => {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(slides));
-      window.dispatchEvent(new Event("bvp:hero:update"));
     } catch {}
   }, [slides]);
 
-  const addSlide = () => {
-    setSlides((prev) => [...prev, { imageUrl: "", title: "", subtitle: "" }]);
-  };
-
-  const removeSlide = (index: number) => {
-    setSlides((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateSlide = (index: number, patch: Partial<HeroSlide>) => {
-    setSlides((prev) => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)));
-  };
+  const addSlide = () => setSlides(prev => [...prev, { imageUrl: "", title: "", subtitle: "" }]);
+  const removeSlide = (index: number) => setSlides(prev => prev.filter((_, i) => i !== index));
+  const updateSlide = (index: number, patch: Partial<HeroSlide>) =>
+    setSlides(prev => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)));
 
   const handleFileSelect = (index: number, file: File | null) => {
     if (!file) return;
@@ -60,39 +49,7 @@ const HeroAdmin = () => {
     reader.readAsDataURL(file);
   };
 
-  const validCount = useMemo(() => slides.filter((s) => s.imageUrl.trim() !== "").length, [slides]);
-
-  // Load banner images from backend (GET /content/all-content -> banner array)
-  useEffect(() => {
-    const load = async () => {
-      try {
-        console.log("[HeroAdmin] GET /content/all-content - loading banner images...");
-        const res = await api.get("/superadmin/all-content");
-        console.log("[HeroAdmin] GET /content/all-content response", res?.status, res?.data);
-        const images: string[] = res?.data?.banner || [];
-        if (Array.isArray(images) && images.length > 0) {
-          setSlides(images.map((url) => ({ imageUrl: url, title: "", subtitle: "" })));
-          toast({ title: "Banner loaded", description: `${images.length} image(s)` });
-        }
-      } catch (error: any) {
-        console.error("[HeroAdmin] GET /content/all-content error", error?.message, error?.response?.data);
-      }
-    };
-    load();
-  }, [toast]);
-
-  const saveToBackend = async () => {
-    try {
-      const images = slides.map((s) => s.imageUrl.trim()).filter(Boolean);
-      console.log("[HeroAdmin] PUT /content/banner - saving images", images);
-      const res = await api.put("/superadmin/banner", { images });
-      console.log("[HeroAdmin] PUT /content/banner response", res?.status, res?.data);
-      toast({ title: "Banner saved", description: `${images.length} image(s)` });
-    } catch (error: any) {
-      console.error("[HeroAdmin] PUT /content/banner error", error?.message, error?.response?.data);
-      toast({ title: "Save failed", description: error?.response?.data?.message || "Could not save banner", variant: "destructive" });
-    }
-  };
+  const validCount = useMemo(() => slides.filter(s => s.imageUrl.trim() !== "").length, [slides]);
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
@@ -100,12 +57,12 @@ const HeroAdmin = () => {
         <div className="text-2xl font-semibold">Banner/Hero</div>
         <div className="text-sm text-muted-foreground">Manage homepage hero slides</div>
       </div>
+
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm text-muted-foreground">{validCount} slide(s) with images</div>
         <div className="flex gap-2">
           <Button onClick={() => setSlides(defaultSlides)} variant="secondary">Restore defaults</Button>
           <Button onClick={addSlide} variant="default">Add slide</Button>
-          <Button onClick={saveToBackend} variant="default">Save to backend</Button>
         </div>
       </div>
 
@@ -123,73 +80,46 @@ const HeroAdmin = () => {
                     id={`image-${index}`}
                     placeholder="https://..."
                     value={slide.imageUrl}
-                    onChange={(e) => updateSlide(index, { imageUrl: e.target.value })}
+                    onChange={e => updateSlide(index, { imageUrl: e.target.value })}
                   />
-                  <div className="text-[11px] text-muted-foreground">Paste a public URL or upload a file below.</div>
                   <div className="pt-1 space-y-2">
                     <Label htmlFor={`file-${index}`}>Upload image</Label>
                     <Input
                       id={`file-${index}`}
                       type="file"
                       accept="image/*"
-                      onChange={(e) => handleFileSelect(index, e.target.files?.[0] ?? null)}
+                      onChange={e => handleFileSelect(index, e.target.files?.[0] ?? null)}
                     />
                     <div className="text-[11px] text-muted-foreground">Supported: JPG, PNG, GIF, WebP. Saved locally.</div>
                   </div>
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor={`title-${index}`}>Title (optional)</Label>
                   <Input
                     id={`title-${index}`}
                     placeholder="Headline"
                     value={slide.title ?? ""}
-                    onChange={(e) => updateSlide(index, { title: e.target.value })}
+                    onChange={e => updateSlide(index, { title: e.target.value })}
                   />
                   <Label htmlFor={`subtitle-${index}`}>Subtitle (optional)</Label>
                   <Input
                     id={`subtitle-${index}`}
                     placeholder="Subheadline"
                     value={slide.subtitle ?? ""}
-                    onChange={(e) => updateSlide(index, { subtitle: e.target.value })}
+                    onChange={e => updateSlide(index, { subtitle: e.target.value })}
                   />
                 </div>
               </div>
 
               {slide.imageUrl && (
-                <div className="mt-4">
-                  <div className="relative aspect-video w-full overflow-hidden rounded-md border">
-                    <img
-                      src={resolveImageUrl(slide.imageUrl)}
-                      className="w-full h-full object-cover"
-                      alt="preview"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        const el = e.currentTarget as HTMLImageElement;
-                        console.warn("[HeroAdmin] preview image onError", el.src);
-                        const candidates = getGoogleDriveAlternateUrls(slide.imageUrl);
-                        const currentIndex = candidates.indexOf(el.src);
-                        const next = candidates[currentIndex + 1] || candidates[0];
-                        if (next && next !== el.src) {
-                          console.log("[HeroAdmin] trying next candidate", next);
-                          el.src = next;
-                          return;
-                        }
-                      }}
-                      onLoad={(e) => {
-                        const el = e.currentTarget as HTMLImageElement;
-                        console.log("[HeroAdmin] preview image onLoad", el.src);
-                      }}
-                    />
-                    {(slide.title || slide.subtitle) && (
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/45" />
-                    )}
-                    {(slide.title || slide.subtitle) && (
-                      <div className="absolute bottom-4 left-4 right-4 text-white">
-                        {slide.title && <div className="text-xl font-semibold">{slide.title}</div>}
-                        {slide.subtitle && <div className="text-sm opacity-90">{slide.subtitle}</div>}
-                      </div>
-                    )}
-                  </div>
+                <div className="mt-4 relative aspect-video w-full overflow-hidden rounded-md border">
+                  <img
+                    src={slide.imageUrl}
+                    className="w-full h-full object-cover"
+                    alt="preview"
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
               )}
 
@@ -202,12 +132,9 @@ const HeroAdmin = () => {
       </div>
 
       <Separator className="my-6" />
-
-      <div className="text-xs text-muted-foreground">Changes are auto-saved to your browser storage. Homepage updates live.</div>
+      <div className="text-xs text-muted-foreground">Changes are auto-saved to your browser storage.</div>
     </div>
   );
 };
 
 export default HeroAdmin;
-
-

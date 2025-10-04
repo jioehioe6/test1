@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const LeadadminbannerSchema = new mongoose.Schema({
+const leadAdminBannerSchema = new mongoose.Schema({
   images: {
     type: [String], // Array of image URLs
     required: true,
@@ -14,6 +14,6 @@ const LeadadminbannerSchema = new mongoose.Schema({
 
 
 
-const LeadAdminBanner = mongoose.model('LeadAdminBanner', LeadadminbannerSchema);
+const leadAdminBanner = mongoose.model('leadAdminBanner', leadAdminBannerSchema);
 
-module.exports = LeadAdminBanner;
+module.exports = leadAdminBanner;

@@ -9,8 +9,8 @@ const NewsItemSchema = new mongoose.Schema({
   year: { type: Number, required: true }
 });
 
-const LeadAdminNewsSchema = new mongoose.Schema({
+const leadAdminNewsSchema = new mongoose.Schema({
   newsItems: [NewsItemSchema]  // array of news items
 });
 
-module.exports = mongoose.model('LeadAdminNews', LeadAdminNewsSchema);
+module.exports = mongoose.model('leadAdminNews', leadAdminNewsSchema);

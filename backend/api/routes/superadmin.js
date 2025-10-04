@@ -222,7 +222,7 @@ router.put('/forward',authMiddleware, async (req, res) => {
 
 
 
-router.put('/reject',authMiddleware, async (req, res) => {
+router.put('/C',authMiddleware, async (req, res) => {
   try {
     // Fetch current content before delete
     const newsDoc = await SuperAdminNews.findOne();

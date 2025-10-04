@@ -17,7 +17,7 @@ type GalleryItem = {
   createdAt: number;
 };
 
-const STORAGE_KEY = "bvp.gallery.items";
+const STORAGE_KEY = "superContent.gallery.items";
 
 const DEFAULT_ITEMS: GalleryItem[] = [];
 
@@ -51,9 +51,9 @@ const GalleryAdmin = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        console.log("[GalleryAdmin] GET /content/gallery - loading...");
-        const res = await api.get("/content/gallery");
-        console.log("[GalleryAdmin] GET /content/gallery response", res?.status, res?.data);
+        console.log("[GalleryAdmin] GET /superadmin/gallery - loading...");
+        const res = await api.get("/superadmin/gallery");
+        console.log("[GalleryAdmin] GET /superadmin/gallery response", res?.status, res?.data);
         const arr: any[] = res?.data?.galleryImages || [];
         const mapped: GalleryItem[] = arr.map((g: any, idx: number) => ({
           id: g._id || `${idx}-${g.image}`,

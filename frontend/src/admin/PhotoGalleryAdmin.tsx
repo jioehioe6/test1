@@ -52,7 +52,7 @@ const PhotoGalleryAdmin = () => {
     const load = async () => {
       console.log("[PhotoGalleryAdmin] GET /content/gallery - loading...");
       try {
-        const res = await api.get("/content/gallery");
+        const res = await api.get("/superadmin/gallery");
         console.log("[PhotoGalleryAdmin] GET /content/gallery response", res?.status, res?.data);
         const doc = res?.data;
         const arr = (doc?.images || doc?.galleryImages || []);
@@ -83,7 +83,7 @@ const PhotoGalleryAdmin = () => {
     }));
     console.log("[PhotoGalleryAdmin] Payload to backend (galleryImages):", galleryImages);
     try {
-      const res = await api.put("/content/gallery", { galleryImages });
+      const res = await api.put("/superadmin/gallery", { galleryImages });
       console.log("[PhotoGalleryAdmin] PUT /content/gallery response", res?.status, res?.data);
       const arr = res?.data?.gallery?.galleryImages || res?.data?.galleryImages || [];
       const mapped: PhotoGalleryItem[] = arr.map((g: any) => ({

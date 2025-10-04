@@ -20,8 +20,7 @@ type NewsItem = {
   createdAt: number;
 };
 
-const STORAGE_KEY = "bvp.news.items";
-
+const STORAGE_KEY = "leadContent";
 // Default fallback items (can be empty or some sample news)
 const DEFAULT_ITEMS: NewsItem[] = [];
 

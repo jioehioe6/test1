@@ -14,7 +14,7 @@ type HeroSlide = {
   subtitle?: string;
 };
 
-const STORAGE_KEY = "bvp.hero.slides";
+const STORAGE_KEY = "Content.hero.slides";
 
 const defaultSlides: HeroSlide[] = [];
 

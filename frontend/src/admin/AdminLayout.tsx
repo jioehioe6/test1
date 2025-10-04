@@ -14,6 +14,28 @@ interface ToggleResponse {
 }
 
 const AdminLayout = () => {
+
+
+  useEffect(() => {
+    // define an async function inside useEffect
+    const fetchContent = async () => {
+      try {
+        const res = await api.get("/superadmin/all-content", {
+        });
+
+        // Store data in localStorage
+        localStorage.setItem("superContent", JSON.stringify(res.data));
+
+        console.log("Data saved to localStorage:", res.data);
+      } catch (error) {
+        console.error("Failed to fetch content:", error);
+      }
+    };
+
+    fetchContent(); // call the async function
+  }, []); // empty dependency array → runs once on mount
+
+  
   const navigate = useNavigate();
   const { toast } = useToast();
   const role = useMemo(() => (localStorage.getItem(ROLE_KEY) || "sub").toLowerCase(), []);

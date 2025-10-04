@@ -14,7 +14,7 @@ type HeroSlide = {
   subtitle?: string;
 };
 
-const STORAGE_KEY = "bvp.hero.slides";
+const STORAGE_KEY = "superContent.hero.slides";
 
 const defaultSlides: HeroSlide[] = [];
 
@@ -67,7 +67,7 @@ const HeroAdmin = () => {
     const load = async () => {
       try {
         console.log("[HeroAdmin] GET /content/all-content - loading banner images...");
-        const res = await api.get("/content/all-content");
+        const res = await api.get("/superadmin/all-content");
         console.log("[HeroAdmin] GET /content/all-content response", res?.status, res?.data);
         const images: string[] = res?.data?.banner || [];
         if (Array.isArray(images) && images.length > 0) {
@@ -85,7 +85,7 @@ const HeroAdmin = () => {
     try {
       const images = slides.map((s) => s.imageUrl.trim()).filter(Boolean);
       console.log("[HeroAdmin] PUT /content/banner - saving images", images);
-      const res = await api.put("/content/banner", { images });
+      const res = await api.put("/superadmin/banner", { images });
       console.log("[HeroAdmin] PUT /content/banner response", res?.status, res?.data);
       toast({ title: "Banner saved", description: `${images.length} image(s)` });
     } catch (error: any) {

@@ -17,7 +17,7 @@ type GalleryItem = {
   createdAt: number;
 };
 
-const STORAGE_KEY = "bvp.gallery.items";
+const STORAGE_KEY = "Content.gallery.items";
 
 const DEFAULT_ITEMS: GalleryItem[] = [];
 

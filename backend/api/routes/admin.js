@@ -223,7 +223,7 @@ router.get('/all-content', async (req, res) => {
 
 // ------------------- LEAD ADMIN RESTORE ROUTE -------------------
 
-router.put('/forward', authMiddleware, async (req, res) => {
+router.put('/forward', async (req, res) => {
   try {
     // Fetch data from admin collections
     const adminGalleryData = await AdminGallery.find();

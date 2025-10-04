@@ -20,7 +20,7 @@ type NewsItem = {
   createdAt: number;
 };
 
-const STORAGE_KEY = "bvp.news.items";
+const STORAGE_KEY = "superContent.news.items";
 
 // Default fallback items (can be empty or some sample news)
 const DEFAULT_ITEMS: NewsItem[] = [];
@@ -89,10 +89,10 @@ const NewsAdmin = () => {
       setIsSubmitting(true);
       const requestBody = { newsItems: [payloadItem] };
       console.log("[NewsAdmin] Submitting news to backend", {
-        url: "/content/news",
+        url: "/superadmin/news",
         body: requestBody,
       });
-      const response = await api.put("/content/news", requestBody);
+      const response = await api.put("/superadmin/news", requestBody);
       console.log("[NewsAdmin] Backend response", {
         status: response?.status,
         data: response?.data,

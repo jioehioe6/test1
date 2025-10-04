@@ -40,6 +40,27 @@ import { useEffect } from "react";
 import ProtectedRoute from "./components/protect";
 
 
+
+import AdminLayout1 from "./leadadmin/AdminLayout";
+import HeroAdmin1 from "./leadadmin/HeroAdmin";
+import SubAdmins1 from "./leadadmin/SubAdmins";
+import SuperAdminEmail1 from "./leadadmin/SuperAdminEmail";
+import NewsAdmin1 from "./leadadmin/NewsAdmin";
+import PhotoGalleryAdmin1 from "./leadadmin/PhotoGalleryAdmin";
+
+
+import Admin2 from "./subadmin/AdminLayout";
+import HeroAdmin2 from "./subadmin/HeroAdmin";
+import SubAdmins2 from "./subadmin/SubAdmins";
+import SuperAdminEmail2 from "./subadmin/SuperAdminEmail";
+import NewsAdmin2 from "./subadmin/NewsAdmin";
+import PhotoGalleryAdmin2 from "./subadmin/PhotoGalleryAdmin";
+
+
+
+
+
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -79,9 +100,41 @@ function App() {
                 <Route path="/rti" element={<RTI />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
 
+
+
+                  <Route
+                  path="/admin2"
+                  element={
+                    <ProtectedRoute>
+                      <Admin2 />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="banner2" element={<HeroAdmin2 />} />
+                  <Route path="sub-admins2" element={<SubAdmins2 />} />
+                  <Route path="super-email2" element={<SuperAdminEmail2 />} />
+                  <Route path="news2" element={<NewsAdmin2 />} />
+                  <Route path="photo-gallery2" element={<PhotoGalleryAdmin2 />} />
+                </Route>
+
                 {/* Admin routes */}
                 
                   <Route
+                  path="/admin1"
+                  element={
+                    <ProtectedRoute>
+                      <AdminLayout1 />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="banner1" element={<HeroAdmin1 />} />
+                  <Route path="sub-admins1" element={<SubAdmins1 />} />
+                  <Route path="super-email1" element={<SuperAdminEmail1 />} />
+                  <Route path="news1" element={<NewsAdmin1 />} />
+                  <Route path="photo-gallery1" element={<PhotoGalleryAdmin1 />} />
+                </Route>
+
+                   <Route
                   path="/admin"
                   element={
                     <ProtectedRoute>
